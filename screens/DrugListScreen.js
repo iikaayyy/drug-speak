@@ -3,21 +3,29 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 
 const allDrugs = {
-  Antibiotics: [
-    { id: '1', name: 'Amoxicillin' },
-    { id: '2', name: 'Ciprofloxacin' },
+  "Pain Relievers": [
+    { id: '1', name: 'Ibuprofen', soundKey: 'Ibuprofen 1 - male.wav' },
+    { id: '2', name: 'Paracetamol', soundKey: 'Paracetamol 1 - male.wav' },
+    { id: '3', name: 'Celecoxib', soundKey: 'Celecoxib 1 - male.wav' },
   ],
-  Cardiovascular: [
-    { id: '3', name: 'Atenolol' },
-    { id: '4', name: 'Lisinopril' },
+  "Antibiotics": [
+    { id: '4', name: 'Chloramphenicol', soundKey: 'Chloramphenicol 1 - male.wav' },
   ],
-  Analgesics: [
-    { id: '5', name: 'Ibuprofen' },
-    { id: '6', name: 'Paracetamol' },
+  "Gastrointestinal Drugs": [
+    { id: '5', name: 'Diphenoxylate', soundKey: 'Diphenoxylate 1 - male.wav' },
   ],
-  Respiratory: [
-    { id: '7', name: 'Salbutamol' },
-    { id: '8', name: 'Montelukast' },
+  "Antifungals": [
+    { id: '6', name: 'Famciclovir', soundKey: 'Famciclovir 1 - male.wav' },
+    { id: '7', name: 'Fluconazole', soundKey: 'Fluconazole 1 - male.wav' },
+  ],
+  "Cardiovascular Drugs": [
+    { id: '8', name: 'Glyceryl trinitrate', soundKey: 'Glyceryl trinitrate 1 - male.wav' },
+  ],
+  "Corticosteroids": [
+    { id: '9', name: 'Hydrocortisone', soundKey: 'Hydrocortisone 1 - male.wav' },
+  ],
+  "Respiratory Medications": [
+    { id: '10', name: 'Salbutamol', soundKey: 'Salbutamol 1 - male.wav' },
   ],
 };
 

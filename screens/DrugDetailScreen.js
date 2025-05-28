@@ -5,6 +5,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { useDispatch } from 'react-redux';
 import { markAsLearned } from '../redux/learningSlice';
+import { drugData } from '../utils/resource';
+import { soundMap } from '../utils/soundMap';
 
 export default function DrugDetailScreen({ route, navigation }) {
   const { drug } = route.params;
@@ -12,6 +14,7 @@ export default function DrugDetailScreen({ route, navigation }) {
   const [recording, setRecording] = useState(null);
   const [sound, setSound] = useState(null);
   const [recordedUri, setRecordedUri] = useState(null);
+  const [gender, setGender] = useState('male');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -67,16 +70,42 @@ export default function DrugDetailScreen({ route, navigation }) {
     await sound.playAsync();
   };
 
+  const playPreRecorded = async () => {
+    try {
+      const matched = drugData.find((d) => d.name === drug.name);
+      if (!matched || !matched.sounds) return;
+
+      const soundFile = matched.sounds.find((s) => s.gender === gender)?.file;
+      if (!soundFile) return;
+
+      const source = soundMap[soundFile];
+      if (!source) {
+        Alert.alert('Missing Audio', 'Audio file not found in mapping.');
+        return;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(source);
+      setSound(sound);
+
+      // Set playback speed: 0.75 for slow, 1.0 for normal
+      await sound.setRateAsync(selectedSpeed === 'slow' ? 0.75 : 1.0, true);
+      await sound.playAsync();
+    } catch (err) {
+      console.error('Audio play error:', err);
+      Alert.alert('Playback Error', 'Something went wrong playing the sound.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{drug.name}</Text>
 
       <View style={styles.iconContainer}>
-        <TouchableOpacity>
-          <FontAwesome5 name="male" size={40} color="#3498db" />
+        <TouchableOpacity onPress={() => setGender('male')}>
+          <FontAwesome5 name="male" size={40} color={gender === 'male' ? '#3498db' : '#ccc'} />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <FontAwesome5 name="female" size={40} color="#e91e63" />
+        <TouchableOpacity onPress={() => setGender('female')}>
+          <FontAwesome5 name="female" size={40} color={gender === 'female' ? '#e91e63' : '#ccc'} />
         </TouchableOpacity>
       </View>
 
@@ -91,6 +120,10 @@ export default function DrugDetailScreen({ route, navigation }) {
         </Picker>
       </View>
 
+      <TouchableOpacity style={styles.playButton} onPress={playPreRecorded}>
+        <Text style={styles.buttonText}>Play AI Pronunciation</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.recordButton}
         onPress={recording ? stopRecording : startRecording}
@@ -102,7 +135,7 @@ export default function DrugDetailScreen({ route, navigation }) {
 
       {recordedUri && (
         <TouchableOpacity style={styles.playButton} onPress={playRecording}>
-          <Text style={styles.buttonText}>Play Recording</Text>
+          <Text style={styles.buttonText}>Play My Recording</Text>
         </TouchableOpacity>
       )}
 
